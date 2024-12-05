@@ -1,0 +1,58 @@
+.navbar {
+  float: left;
+  font-weight: 300;
+  height: 100vh;
+  width: 300px;
+  background: linear-gradient(to bottom, #1e3c72, #2a5298);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: white;
+}
+
+h1 {
+  font-weight: 400;
+  text-align: center;
+  padding: 20px;
+}
+
+.sidebar-option {
+  padding: 15px 20px;
+  text-decoration: none;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.sidebar-option:hover {
+  background-color: #3a6f9f;
+  border-radius: 5px;
+}
+
+.usercontent {
+  display: flex;
+  flex-grow: 1;
+  flex-flow: column nowrap;
+  justify-content: end;
+}
+
+.user {
+  margin: 70px auto;
+  font-size: 20px;
+  text-align: center;
+}
+
+.logout {
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: pointer;
+  color: lightgray;
+}
+
+.disabled {
+  cursor: default;
+}
+
+.disabled:hover {
+  background-color: transparent;
+}

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "mongodb/mongodb": "^1.20",
+        "rafaelwendel/phpsupabase": "^0.0.8"
+    }
+}

@@ -17,8 +17,8 @@ $mdb = $mdbclient->selectDataBase('media');
 
 // Connect to supabase
 $sbservice = new PHPSupabase\Service(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZpa3V4eG1pcWRsa3B0am9nbWttIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjUzNTU5MywiZXhwIjoyMDQ4MTExNTkzfQ.gAiOOrJlr3tNJuZJIbMn0vzSROLFyphBOXP_JAL-ClE",
-    "https://vikuxxmiqdlkptjogmkm.supabase.co"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNyZXB6Zmp4bXpiemVpc2tqZndnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI2OTk1MjIsImV4cCI6MjA0ODI3NTUyMn0.DpynUeSzuZ1ysCnFE65XqjxJWICzm6Z7JfkrNYaTTCc",
+    "https://srepzfjxmzbzeiskjfwg.supabase.co"
 );
 
 // Get data from request

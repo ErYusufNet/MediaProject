@@ -2,16 +2,21 @@ body {
   margin: 0;
   font-family: Azeret Mono, monospace;
   font-optical-sizing: auto; 
+  overflow-x: hidden; /* Yatay kaydırmayı engelle */
 }
 
 .main {
   display: flex;
+  flex-direction: column; /* Flex yönü dikey olacak şekilde ayarlandı */
+  width: 100%; /* Ana kapsayıcı tüm genişliği kapsayacak şekilde ayarlandı */
 }
 
 .contentContainer {
   height: 100vh;
-  overflow-y: scroll;
+  overflow-y: auto; /* İçeriğin dikey kaymasını sağlayacak */
   flex: 1;
+  padding: 10px; /* İçerik alanına boşluk eklenmesi */
+  box-sizing: border-box; /* Padding'in genişlik hesabına dahil edilmesini sağlar */
 }
 
 .window-content {
@@ -19,4 +24,44 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+/* Responsive Styles */
+
+/* Tablet ve Mobil Cihazlar */
+@media (max-width: 1024px) {
+  .main {
+    flex-direction: column; /* Küçük ekranlarda dikey hizalama */
+  }
+
+  .contentContainer {
+    height: auto; /* Yüksekliği otomatik yaparak içerik sığmasını sağlarız */
+    overflow-y: auto; /* İçeriğin kaydırılabilmesi için overflow ekleriz */
+  }
+
+  .window-content {
+    height: auto; /* Yüksekliği otomatik yaparak daha küçük ekranlarda uyum sağlar */
+  }
+}
+
+/* Mobil Cihazlar */
+@media (max-width: 768px) {
+  .main {
+    flex-direction: column; /* Ekran boyutuna göre dikey hizalama */
+  }
+
+  .contentContainer {
+    padding: 5px; /* Küçük ekranlarda daha az padding */
+  }
+}
+
+/* Küçük Mobil Cihazlar */
+@media (max-width: 480px) {
+  .contentContainer {
+    padding: 0; /* Küçük ekranlarda padding kaldırıldı */
+  }
+
+  .window-content {
+    padding: 5px; /* Küçük ekranlarda pencere içeriği için padding eklendi */
+  }
 }

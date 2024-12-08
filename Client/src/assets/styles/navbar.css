@@ -1,5 +1,5 @@
+/* Navbar */
 .navbar {
-  float: left;
   font-weight: 300;
   height: 100vh;
   width: 300px;
@@ -8,6 +8,8 @@
   flex-direction: column;
   justify-content: flex-start;
   color: white;
+  box-sizing: border-box; /* Border box modelini etkinleştirerek taşmayı engelle */
+  padding: 0 10px; /* Sağ/sol padding ekleyerek taşmaları engelleriz */
 }
 
 h1 {
@@ -22,6 +24,7 @@ h1 {
   font-size: 18px;
   transition: background-color 0.3s ease;
   cursor: pointer;
+  width: 100%; /* Sağ/sola kayma engellemek için tam genişlik */
 }
 
 .sidebar-option:hover {
@@ -55,4 +58,85 @@ h1 {
 
 .disabled:hover {
   background-color: transparent;
+}
+
+/* Responsive Styles */
+
+/* Tablet ve Mobil Cihazlar */
+@media (max-width: 1024px) {
+  .navbar {
+    width: 100%; /* Navbar genişliği ekran genişliğine uyum sağlar */
+    height: auto; /* Yükseklik otomatik ayarlanır */
+    flex-direction: row; /* Yatayda sıralanır */
+    justify-content: space-between; /* Öğeleri yatayda hizalar */
+    padding: 10px; /* Sağ/sol padding ekleriz */
+  }
+
+  h1 {
+    font-size: 24px;
+    padding: 10px 0;
+  }
+
+  .sidebar-option {
+    width: 100%; /* Tüm genişlikte gösterim */
+    padding: 12px 15px;
+  }
+}
+
+/* Küçük Mobil Cihazlar */
+@media (max-width: 768px) {
+  .navbar {
+    width: 100%; /* Navbar genişliği ekran genişliğine uyum sağlar */
+    height: auto; /* Yükseklik otomatik ayarlanır */
+    padding: 10px; /* Sağ/sol padding ekleriz */
+    flex-direction: column; /* Dikey hizalama */
+    justify-content: flex-start; /* Üstten başlayarak hizalar */
+  }
+
+  h1 {
+    font-size: 20px; /* Başlık fontunu küçültür */
+    padding: 15px;
+  }
+
+  .sidebar-option {
+    padding: 10px 15px;
+    font-size: 16px;
+    width: 100%; /* Navbar öğelerini tam genişlikte tutar */
+  }
+
+  .user {
+    font-size: 18px; /* Kullanıcı yazısını küçültür */
+  }
+
+  .logout {
+    font-size: 14px; /* Logout yazısını küçültür */
+  }
+}
+
+/* Çok Küçük Ekranlar */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px; /* Daha küçük cihazlar için padding azaltıldı */
+    width: 100%;
+    height: auto;
+    flex-direction: column; /* Navbar öğeleri dikey hizalanır */
+    justify-content: flex-start;
+  }
+
+  h1 {
+    font-size: 18px; /* Başlık fontunu daha da küçültür */
+  }
+
+  .sidebar-option {
+    padding: 8px 10px; /* Düğme boyutunu küçültür */
+    font-size: 14px; /* Yazı boyutunu küçültür */
+  }
+
+  .user {
+    font-size: 16px; /* Kullanıcı yazısını küçültür */
+  }
+
+  .logout {
+    font-size: 12px; /* Logout yazısını daha da küçültür */
+  }
 }

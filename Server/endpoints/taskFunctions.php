@@ -1,5 +1,5 @@
 <?php
-
+//retrieve task based on user type
 function getTasks($view, $user, $service, $mdb) {
     $db = $service->initializeDatabase('tasks', 'id');
 

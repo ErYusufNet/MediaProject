@@ -8,11 +8,11 @@ import {
   Option,
   Field,
   Input,
-  Button, 
-  Card, 
+  Button,
+  Card,
   Text,
-  Spinner, 
-  CardFooter, 
+  Spinner,
+  CardFooter,
   SelectProps
 } from "@fluentui/react-components";
 import { makeStyles } from '@griffel/react';
@@ -107,7 +107,8 @@ interface Task {
   id: string;
   name: string;
   desc: string;
-  img: string;
+  img: string | null;
+  video: string | null;
   status: string;
   assigned_to: Array<String>;
   created_at: Date;
@@ -135,7 +136,7 @@ function TasksPage() {
     body.append('id', id);
     body.append('status', value);
 
-    await axios.post('http://localhost:8000/tasks/update-status', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    await axios.post('http://localhost:8000/tasks/update-status', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
   }
 
   function handleCommentChange(taskId: string, value: string) {
@@ -147,11 +148,11 @@ function TasksPage() {
     const commentText = newComment[taskId];
 
     if (commentText) {
-        const newComment: Comment = {
-            user: localStorage.user, 
-            comment: commentText,
-            date: new Date().toLocaleDateString(),
-        };
+      const newComment: Comment = {
+        user: localStorage.user,
+        comment: commentText,
+        date: new Date().toLocaleDateString(),
+      };
 
       const body = new URLSearchParams();
       body.append('taskId', taskId);
@@ -160,7 +161,7 @@ function TasksPage() {
       body.append('date', new Date().toLocaleDateString());
 
       try {
-        const response = await axios.post('http://localhost:8000/comments/create-comment', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+        const response = await axios.post('http://localhost:8000/comments/create-comment', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
         alert(response.data.message);
 
         const updatedTasks = tasks.map((task) => {
@@ -181,26 +182,26 @@ function TasksPage() {
   // function for deleting comments
   async function deleteComment(taskId: string, commentIndex: number) {
     const body = new URLSearchParams();
-      body.append('taskId', taskId);
-      body.append('commentIndex', commentIndex.toString());
+    body.append('taskId', taskId);
+    body.append('commentIndex', commentIndex.toString());
 
-      try {
-        const response = await axios.post('http://localhost:8000/comments/delete-comment', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-        alert(response.data.message);
+    try {
+      const response = await axios.post('http://localhost:8000/comments/delete-comment', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      alert(response.data.message);
 
-        const updatedTasks = tasks.map((task) => {
-          if (task.id === taskId) {
-            const updatedComments = task.comments.filter((_, index) => index !== commentIndex);
-            return { ...task, comments: updatedComments };
-          }
-          return task;
-        });
-      
-        setTasks(updatedTasks);
-      } catch (error) {
-        console.error(error);
-        alert("An unexpected error has occurred.");
-      }
+      const updatedTasks = tasks.map((task) => {
+        if (task.id === taskId) {
+          const updatedComments = task.comments.filter((_, index) => index !== commentIndex);
+          return { ...task, comments: updatedComments };
+        }
+        return task;
+      });
+
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error has occurred.");
+    }
   }
 
   async function displayReviwers(id: string) {
@@ -216,7 +217,7 @@ function TasksPage() {
     body.append('id', assignTo);
     body.append('reviewer', reviewer);
     console.log(body);
-    const response = await axios.post(`http://localhost:8000/tasks/assign-to`, body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+    const response = await axios.post(`http://localhost:8000/tasks/assign-to`, body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
     alert(response.data.message);
     setReviewers([]);
     setAssignTo("");
@@ -234,9 +235,9 @@ function TasksPage() {
     body.append('id', id);
 
     try {
-      await axios.post('http://localhost:8000/tasks/delete-task', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      await axios.post('http://localhost:8000/tasks/delete-task', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
 
-      setTasks(tasks => 
+      setTasks(tasks =>
         tasks.filter(task => task.id !== id)
       );
     } catch (error) {
@@ -253,7 +254,7 @@ function TasksPage() {
     } else {
       displayTasks("unassigned-tasks");
     }
-    
+
   }, []);
 
   return (
@@ -262,103 +263,106 @@ function TasksPage() {
         <div className='task-option' onClick={() => displayTasks("all-tasks")}>
           All tasks
         </div>
-      {localStorage.getItem('role') === 'reviewer' && (
-        <div className='task-option' onClick={() => displayTasks("your-tasks")}>
-          Your tasks
-        </div>
-      )}
-      {localStorage.getItem('role') === 'uploader' && (
-        <div className='task-option' onClick={() => displayTasks("your-uploads")}>
-          Your Uploads
-        </div>
-      )}
-      {localStorage.getItem('role') === 'admin' && (
-        <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>
-          Unassigned tasks
-        </div>
-      )}
-      </nav>
-      {assigning 
-      ? <div className='task-content'>
-      {
-        tasks.map((task) => (
-          <div className='task-item'>
-            <img className='task-img' src={task.img} alt={task.name}/>
-
-            <div className='task-info'> 
-              <div className='task-name'>{task.name}</div>
-              <div className='installer-name'>Installer: {task.installer}</div>
-              <div className='installer-name'>Assigned: {task.assigned_to}</div>
-              <div className='task-description'>Description: {task.desc}</div>
-              {currentView === "unassigned-tasks" && (
-                <div>
-                  <div className={styles.button}>
-                    <Button className='assignment-button' onClick={(e) => displayReviwers(task.id)}>ASSIGN</Button>
-                  </div>
-                  <div className={styles.button}>
-                    <Button className='delete-button' onClick={(e) => deleteTask(task.id)}>DELETE</Button>
-                  </div>
-                </div>
-              )}
-              <div className='task-status'>
-                <Label htmlFor="status-select">Status: </Label>
-                {currentView === "your-tasks" ? (
-                  <Dropdown id="status-select" placeholder={task.status}>
-                    <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
-                    <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
-                    <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
-                  </Dropdown>
-                ) : (
-                  <div>{task.status}</div>
-                )}
-              </div>
-            </div>
-
-          <div className={styles.taskComments}>
-            <div className={styles.title}>Comments:</div>
-            {task.comments.map((comment, index) => (
-              <div className={styles.commentHolder} key={index}>
-                <div className={styles.commentUser}>{comment.user}</div>
-                <div className={styles.comment}>{comment.comment}</div>
-                <div className={styles.commentDate}>{comment.date}</div>
-                {localStorage.getItem("user") === comment.user && (
-                  <div className={styles.button}>
-                    <Button onClick={(event) => {event.preventDefault(); deleteComment(task.id, index);}}>Delete</Button>
-                  </div>)}
-              </div>
-            ))}
-            <div className={styles.newComment}>
-              <Field>
-                <Input
-                  className={styles.input}
-                  type="text"
-                  maxLength={90}
-                  placeholder="Add a comment"
-                  value={newComment[task.id] || ""}
-                  onChange={(e) => handleCommentChange(task.id, e.target.value)}
-                />
-              </Field>
-                <div className={styles.button}>
-                  <Button onClick={(event) => {event.preventDefault(); submitComment(task.id);}}>Submit</Button>
-                </div>
-            </div>
+        {localStorage.getItem('role') === 'reviewer' && (
+          <div className='task-option' onClick={() => displayTasks("your-tasks")}>
+            Your tasks
           </div>
+        )}
+        {localStorage.getItem('role') === 'uploader' && (
+          <div className='task-option' onClick={() => displayTasks("your-uploads")}>
+            Your Uploads
+          </div>
+        )}
+        {localStorage.getItem('role') === 'admin' && (
+          <div className='task-option' onClick={() => displayTasks("unassigned-tasks")}>
+            Unassigned tasks
+          </div>
+        )}
+      </nav>
+      {assigning
+        ? <div className='task-content'>
+          {
+            tasks.map((task) => {
+              let img_or_vid = task.img ? <img className='task-img' src={task.img} alt={task.name} /> : task.video ? <video loop autoPlay={true} muted playsInline src={task.video} id="video" width="300" height="200" ></video> : ""
+              return (
+                <div className='task-item'>
+                  {img_or_vid}
+
+                  <div className='task-info'>
+                    <div className='task-name'>{task.name}</div>
+                    <div className='installer-name'>Installer: {task.installer}</div>
+                    <div className='installer-name'>Assigned: {task.assigned_to}</div>
+                    <div className='task-description'>Description: {task.desc}</div>
+                    {currentView === "unassigned-tasks" && (
+                      <div>
+                        <div className={styles.button}>
+                          <Button className='assignment-button' onClick={(e) => displayReviwers(task.id)}>ASSIGN</Button>
+                        </div>
+                        <div className={styles.button}>
+                          <Button className='delete-button' onClick={(e) => deleteTask(task.id)}>DELETE</Button>
+                        </div>
+                      </div>
+                    )}
+                    <div className='task-status'>
+                      <Label htmlFor="status-select">Status: </Label>
+                      {currentView === "your-tasks" ? (
+                        <Dropdown id="status-select" placeholder={task.status}>
+                          <Option onClick={(e) => changeStatus('Waiting', task.id)} value="Waiting">Waiting</Option>
+                          <Option onClick={(e) => changeStatus('Approved', task.id)} value="Approved">Approved</Option>
+                          <Option onClick={(e) => changeStatus('Denied', task.id)} value="Denied">Denied</Option>
+                        </Dropdown>
+                      ) : (
+                        <div>{task.status}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={styles.taskComments}>
+                    <div className={styles.title}>Comments:</div>
+                    {task.comments.map((comment, index) => (
+                      <div className={styles.commentHolder} key={index}>
+                        <div className={styles.commentUser}>{comment.user}</div>
+                        <div className={styles.comment}>{comment.comment}</div>
+                        <div className={styles.commentDate}>{comment.date}</div>
+                        {localStorage.getItem("user") === comment.user && (
+                          <div className={styles.button}>
+                            <Button onClick={(event) => { event.preventDefault(); deleteComment(task.id, index); }}>Delete</Button>
+                          </div>)}
+                      </div>
+                    ))}
+                    <div className={styles.newComment}>
+                      <Field>
+                        <Input
+                          className={styles.input}
+                          type="text"
+                          maxLength={90}
+                          placeholder="Add a comment"
+                          value={newComment[task.id] || ""}
+                          onChange={(e) => handleCommentChange(task.id, e.target.value)}
+                        />
+                      </Field>
+                      <div className={styles.button}>
+                        <Button onClick={(event) => { event.preventDefault(); submitComment(task.id); }}>Submit</Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
         </div>
-      ))}
-    </div>
-    : <div>
-        {reviewers.map((reviewer) => (
+        : <div>
+          {reviewers.map((reviewer) => (
             <Card key={reviewer} className={styles.userCard}>
-            <Text>{reviewer}</Text>
-            <CardFooter>
-              <div className={styles.button}>
-                <Button onClick={(e) => assignToTask(reviewer)}>Assign</Button>
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-        <Button onClick={(e) => cancel()}>Cancel</Button>
-      </div>}
+              <Text>{reviewer}</Text>
+              <CardFooter>
+                <div className={styles.button}>
+                  <Button onClick={(e) => assignToTask(reviewer)}>Assign</Button>
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+          <Button onClick={(e) => cancel()}>Cancel</Button>
+        </div>}
     </div>
   );
 }

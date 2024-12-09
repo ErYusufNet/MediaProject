@@ -6,12 +6,12 @@ import axios from 'axios';
 function UploadPage() {
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  const [img, setImg] = useState<File | null>(null);
-  
+  const [file, setUploadedFile] = useState<File | null>(null);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!img) {
+    if (!file) {
       alert("Please upload an image.");
       return;
     }
@@ -19,7 +19,7 @@ function UploadPage() {
     const body = new FormData();
     body.append('name', name);
     body.append('desc', desc);
-    body.append('img', img);
+    body.append('file', file);
     body.append('installer', localStorage.getItem('user') as string);
 
     try {
@@ -31,8 +31,9 @@ function UploadPage() {
   };
 
   const onImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-     if (event.target.files && event.target.files[0]) {
-      setImg(event.target.files[0]);
+    if (event.target.files && event.target.files[0]) {
+
+      setUploadedFile(event.target.files[0]);
     }
   };
 
@@ -42,7 +43,7 @@ function UploadPage() {
         <fieldset>
           <legend>Name and Description</legend>
           <Label htmlFor='media-name'>Media's name</Label>
-          <input id='media-name' type='text' onChange={(e) => setName(e.target.value)} maxLength={30} required/>
+          <input id='media-name' type='text' onChange={(e) => setName(e.target.value)} maxLength={30} required />
 
           <Label htmlFor='media-description'>Description</Label>
           <textarea id='media-description' onChange={(e) => setDesc(e.target.value)} maxLength={300} required></textarea>
@@ -50,20 +51,20 @@ function UploadPage() {
 
         <fieldset>
           <legend>Upload Media</legend>
-          
+
           <Label htmlFor="file">Upload File</Label>
-          <input 
-            id="file" 
-            name="media" 
-            type="file" 
-            accept="image/png, image/jpeg"
+          <input
+            id="file"
+            name="media"
+            type="file"
+            accept="image/png, image/jpeg, video/mp4, video/mov"
             onChange={onImageChange}
             required
           />
-          {img && <img src={URL.createObjectURL(img)} alt="preview image" className='file'/>}
+          {file?.type.includes("image") ? <img src={URL.createObjectURL(file)} alt="preview image" className='file' /> : file?.type.includes("video") ? <video autoPlay={true} muted playsInline src={URL.createObjectURL(file)} id="video" width="800" height="600" ></video> : ""}
         </fieldset>
 
-        <input type='submit' value="Upload"/>
+        <input type='submit' value="Upload" />
       </form>
     </div>
   )

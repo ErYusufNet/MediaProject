@@ -1,13 +1,14 @@
 <?php
 
-function login($username, $password, $service) {
+function login($username, $password, $service)
+{
     $db = $service->initializeDatabase('users', 'id');
 
     try {
         $user = $db->findBy('username', $username)->getResult();
 
         if ($user && password_verify($password, $user[0]->password)) {
-            http_response_code(200); 
+            http_response_code(200);
             return json_encode(['message' => 'Login successful', 'user' => $user[0]]);
         } else {
             http_response_code(401);
@@ -19,7 +20,8 @@ function login($username, $password, $service) {
     }
 }
 
-function register($username, $password, $service) {
+function register($username, $password, $service)
+{
     $db = $service->initializeDatabase('users', 'id');
 
     try {
@@ -46,13 +48,14 @@ function register($username, $password, $service) {
     }
 }
 
-function users($service) {
+function users($service)
+{
     $db = $service->initializeDatabase('users', 'id');
 
     try {
         $users = $db->fetchAll()->getResult();
 
-        http_response_code(200); 
+        http_response_code(200);
         return json_encode(['users' => $users]);
     } catch (Error $e) {
         http_response_code(500);
@@ -60,13 +63,14 @@ function users($service) {
     }
 }
 
-function deleteUser($id, $service) {
+function deleteUser($id, $service)
+{
     $db = $service->initializeDatabase('users', 'id');
-    
+
     try {
         $db->delete($id);
 
-        http_response_code(200); 
+        http_response_code(200);
         return json_encode(['message' => 'User deleted!']);
     } catch (Error $e) {
         http_response_code(500);
@@ -74,17 +78,18 @@ function deleteUser($id, $service) {
     }
 }
 
-function updateRole($id, $role, $service) {
+function updateRole($id, $role, $service)
+{
     $db = $service->initializeDatabase('users', 'id');
 
     $newRole = [
         'role' => $role
     ];
-    
+
     try {
         $db->update($id, $newRole);
 
-        http_response_code(200); 
+        http_response_code(200);
         return json_encode(['message' => 'Role changed!']);
     } catch (Error $e) {
         http_response_code(500);
@@ -92,18 +97,19 @@ function updateRole($id, $role, $service) {
     }
 }
 
-function getReviewers($service) {
+function getReviewers($service)
+{
     $db = $service->initializeDatabase('users', 'id');
     try {
         $result = $db->findBy('role', 'reviewer')->getResult();
         $reviewers = []; //iterator_to_array($result)
-        for ($x = 0; $x <= count(iterator_to_array($result))-1; $x++) {
+        for ($x = 0; $x <= count($result) - 1; $x++) {
             $reviewers[] = $result[$x]->username;
-          }
-        $final = iterator_to_array($reviewers);
+        }
+        $final = $reviewers;
         http_response_code(200);
         return json_encode(['message' => $final]);
-    }  catch (Error $e) {
+    } catch (Error $e) {
         http_response_code(500);
         return $e->getMessage();
     }

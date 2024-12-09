@@ -53,14 +53,14 @@ function UsersPage(props: SelectProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const selectId = useId();
 
-  async function deleteUser(id:string) {
+  async function deleteUser(id: string) {
     const body = new URLSearchParams();
     body.append('id', id);
 
     try {
-      await axios.post('http://localhost:8000/users/delete', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+      await axios.post('http://localhost:8000/users/delete', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
 
-      setUsers(users => 
+      setUsers(users =>
         users.filter(user => user.id !== id)
       );
     } catch (error) {
@@ -68,16 +68,16 @@ function UsersPage(props: SelectProps) {
     }
   }
 
-  async function changeRole(id:string, role:string) {
+  async function changeRole(id: string, role: string) {
     const body = new URLSearchParams();
     body.append('id', id);
     body.append('role', role)
 
     try {
-      await axios.post('http://localhost:8000/users/updaterole', body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
+      await axios.post('http://localhost:8000/users/updaterole', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
 
-      setUsers(users => 
-        users.map(user => 
+      setUsers(users =>
+        users.map(user =>
           user.id === id ? { ...user, role: role } : user
         )
       );
@@ -127,7 +127,7 @@ function UsersPage(props: SelectProps) {
             <CardFooter>
               {user.username !== localStorage.getItem('user') && localStorage.getItem('role') === "admin" && (
                 <>
-                  <Button icon={<PersonDelete24Regular />} onClick={() => deleteUser (user.id)}>Delete</Button>
+                  <Button icon={<PersonDelete24Regular />} onClick={() => deleteUser(user.id)}>Delete</Button>
                   <Select id={selectId} {...props} onChange={(e) => changeRole(user.id, e.target.value)}>
                     <option value="admin">Admin</option>
                     <option value="reviewer">Reviewer</option>

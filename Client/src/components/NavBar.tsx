@@ -3,12 +3,12 @@ import '../assets/styles/navbar.css';
 
 // Set up values for component
 interface InputProps {
-    changeView: (value: string) => void;
+  changeView: (value: string) => void;
 }
 
 export function NavBar({ changeView }: InputProps) {
   const navigate = useNavigate();
-  
+
   // Send signal to parent when an option is pressed
   function handleClick(value: string) {
     changeView(value);
@@ -56,23 +56,23 @@ export function NavBar({ changeView }: InputProps) {
       </div>
     );
   } else if (localStorage.getItem('role') == 'uploader') {
-    return(
+    return (
       <div className="navbar">
-          <h1>BuildScope</h1>
-          <nav>
-            <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
-            <div className='sidebar-option' onClick={() => handleClick('upload')}>Upload</div>
-          </nav>
-          <div className='usercontent'>
-            <div className='user'>
-              {localStorage.getItem('user')}
-              <p></p>
-              {localStorage.getItem('role')}
-              <div className='logout' onClick={logout}>log out</div>
-            </div>
+        <h1>BuildScope</h1>
+        <nav>
+          <div className='sidebar-option' onClick={() => handleClick('tasks')}>Tasks</div>
+          <div className='sidebar-option' onClick={() => handleClick('upload')}>Upload</div>
+        </nav>
+        <div className='usercontent'>
+          <div className='user'>
+            {localStorage.getItem('user')}
+            <p></p>
+            {localStorage.getItem('role')}
+            <div className='logout' onClick={logout}>log out</div>
           </div>
         </div>
-      )
+      </div>
+    )
   }
   console.log(localStorage.getItem('role'))
   return (

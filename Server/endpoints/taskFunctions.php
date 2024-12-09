@@ -1,20 +1,22 @@
 <?php
+use MongoDB\BSON\ObjectId;
 
-function getTasks($view, $user, $service, $mdb) {
+function getTasks($view, $user, $service, $mdb)
+{
     $db = $service->initializeDatabase('tasks', 'id');
 
     try {
         if ($view === "your-tasks") {
             $result = $db->findBy('assigned_to', $user)->getResult();
-        } else if($view === "your-uploads") {
+        } else if ($view === "your-uploads") {
             $result = $db->findBy('installer', $user)->getResult();
-        } else if($view === "all-tasks") {
+        } else if ($view === "all-tasks") {
             $result = $db->fetchAll()->getResult();
         } else {
             $result = $db->findBy('assigned_to', "")->getResult();
         }
 
-        $tasks = iterator_to_array($result);
+        $tasks = $result;
 
         foreach ($tasks as &$task) {
             $image = $mdb->images->findOne(['task_id' => $task->id]);
@@ -22,19 +24,36 @@ function getTasks($view, $user, $service, $mdb) {
             if ($image) {
                 $task->img = 'data:image/png;base64,' . base64_encode($image->img->getData());
             } else {
+                $video = $mdb->videos->findOne(['task_id' => $task->id]);
+                if ($video) {
+                    $fileId = $video->video_id;
+                    $video_file = $mdb->selectGridFSBucket()->openDownloadStream($fileId);
+                    $contents = stream_get_contents($video_file);
+                    // $file = $mdb->selectGridFSBucket()->findOne(['_id' => $fileId]);
+                    // if ($video_file) {
+                    //     header('Content-Type: application/octet-stream');
+                    // }
+                    // fpassthru($stream); // 将图片内容直接输出到浏览器
+                    // fclose($stream); // 关闭流
+                    $task->video = 'data:video/mp4;base64,' . base64_encode($contents);
+                } else {
+                    $task->video = null;
+                }
+
                 $task->img = null;
             }
         }
-        
+
         http_response_code(200);
         return json_encode(['message' => $tasks]);
-    }  catch (Error $e) {
+    } catch (Error $e) {
         http_response_code(500);
         return $e->getMessage();
     }
 }
 
-function createTask($name, $desc, $img, $installer, $service, $mdb) {
+function createTask($name, $desc, $file, $installer, $service, $mdb)
+{
     $db = $service->initializeDatabase('tasks', 'id');
 
     try {
@@ -49,22 +68,34 @@ function createTask($name, $desc, $img, $installer, $service, $mdb) {
         ];
 
         $data = $db->insert($newtask);
+        if (str_contains($file["type"], 'video')) {
+            $stream = fopen($file['tmp_name'], 'rb');
+            $videoId = $mdb->selectGridFSBucket()->uploadFromStream($file["name"], $stream);
+            fclose($stream);
+            $mdb->videos->insertOne([
+                'task_id' => $data[0]->id,
+                'video_id' => $videoId,
+            ]);
+        }
+        if (str_contains($file["type"], 'image')) {
+            $mdb->images->insertOne([
+                'task_id' => $data[0]->id,
+                'img' => new MongoDB\BSON\Binary(file_get_contents($file['tmp_name']), MongoDB\BSON\Binary::TYPE_GENERIC),
+            ]);
+        }
 
-        $mdb->images->insertOne([
-            'task_id' => $data[0]->id,
-            'img' => new MongoDB\BSON\Binary(file_get_contents($img['tmp_name']), MongoDB\BSON\Binary::TYPE_GENERIC),
-        ]);
 
         http_response_code(201);
         echo json_encode(["message" => "Task created successfully."]);
 
-    }  catch (Error $e) {
+    } catch (Error $e) {
         http_response_code(500);
         return $e->getMessage();
     }
 }
 
-function updateStatus($id, $status, $service) {
+function updateStatus($id, $status, $service)
+{
     $db = $service->initializeDatabase('tasks', 'id');
 
     try {
@@ -80,7 +111,8 @@ function updateStatus($id, $status, $service) {
     }
 }
 
-function createComment($taskId, $user, $comment, $date, $service) {
+function createComment($taskId, $user, $comment, $date, $service)
+{
     $db = $service->initializeDatabase('tasks', 'id');
 
     try {
@@ -111,7 +143,8 @@ function createComment($taskId, $user, $comment, $date, $service) {
     }
 }
 
-function deleteComment($taskId, $commentIndex, $service) {
+function deleteComment($taskId, $commentIndex, $service)
+{
     $commentIndex = intval($commentIndex);
     $db = $service->initializeDatabase('tasks', 'id');
 
@@ -137,7 +170,8 @@ function deleteComment($taskId, $commentIndex, $service) {
     }
 }
 
-function assignToTask($id, $name, $service) {
+function assignToTask($id, $name, $service)
+{
     $db = $service->initializeDatabase('tasks', 'id');
     try {
         $updatedtask = [
@@ -155,13 +189,14 @@ function assignToTask($id, $name, $service) {
     }
 }
 
-function deleteTask($id, $service) {
+function deleteTask($id, $service)
+{
     $db = $service->initializeDatabase('tasks', 'id');
-    
+
     try {
         $db->delete($id);
 
-        http_response_code(200); 
+        http_response_code(200);
         return json_encode(['message' => 'Task deleted!']);
     } catch (Error $e) {
         http_response_code(500);

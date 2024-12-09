@@ -9,148 +9,170 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     color: #333;
-    overflow-x: hidden; /* Yatay kaydırmayı engelleyelim */
-    margin: 0; /* Sağ/sol boşlukları sıfırlayalım */
+    overflow-x: hidden; /* Yatay kaydırmayı engelle */
+    margin: 0;
 }
 
 /* Navbar */
 .tasknav {
     display: flex;
     justify-content: center;
-    height: 7%;
+    align-items: center;
+    flex-wrap: wrap; /* Daha küçük ekranlarda elemanların taşmasını önler */
     width: 100%;
+    height: auto; /* Yükseklik otomatik olarak ayarlanır */
+    padding: 10px;
 }
 
 .task-option {
-    margin: 0 10px; /* Dışarı kayanları azaltmak için margin*/
-    justify-content: center;
-    align-items: center;
+    margin: 5px 15px; /* Dikey ve yatay boşluk */
+    text-align: center; /* Metinleri ortalar */
     border-radius: 15px;
     cursor: pointer;
     font-size: 18px;
-    padding: 10px; /* Daha iyi dokunma alanı için içerik ekleme */
+    padding: 10px 20px;
+    transition: background-color 0.3s ease, text-decoration 0.3s ease;
 }
 
 .task-option:hover {
     text-decoration: underline 2px;
+    background-color: rgba(0, 0, 0, 0.1); /* Hover efekti */
 }
 
-/* Task Sholder */
+/* Task Holder */
 .tasksholder {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Ortalamayı sağlamak için */
+    justify-content: center;
     width: 100%;
-    height: auto;
-    box-sizing: border-box; /* Border box modelini etkinleştirerek taşmayı engelle */
-    padding: 0 10px; /* Sağ/sol boşlukları sıfırlayalım */
+    padding: 10px; /* Etrafında boşluk bırak */
 }
 
 /* Task Content */
 .task-content {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
+    justify-content: center;
     width: 100%;
 }
 
 /* Task Item */
 .task-item {
-    margin: 20px auto; /* Üst-alt ve yanal boşluk */
-    width: calc(60% - 40px); /* Genişlik hesaplama */
-    min-width: 300px; /* Küçük ekranlar için minimum genişlik */
-    max-width: 100%; /* Genişliğin aşılmasını engelle */
+    margin: 20px 10px; /* Elemanların etrafında boşluk */
+    width: calc(30% - 40px); /* Eleman genişliği, ekran boyutuna göre ölçeklenir */
+    min-width: 250px; /* Minimum genişlik */
+    max-width: 100%; /* Genişliğin aşılmasını engeller */
     border: 1px solid rgb(185, 185, 185);
     border-radius: 5px;
-    box-sizing: border-box; /* Border box modelini etkinleştirerek taşmayı engelle */
+    background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Task Image */
 .task-img {
     width: 100%;
     max-height: 150px;
-    object-fit: cover; /* Görselin alanını kaplamasını sağlar */
+    object-fit: cover; /* Görselin boyutuna uyum sağlar */
+    border-bottom: 1px solid rgb(185, 185, 185);
 }
 
 /* Task Info */
 .task-info {
+    padding: 10px;
     position: relative;
-    padding: 5px; /* İçerik boşluğu */
 }
 
 .task-name {
     font-size: 20px;
-    text-decoration: underline;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .task-status {
     position: absolute;
-    right: 0;
-    top: 0;
-    margin-right: 5px;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    color: #555;
 }
 
-/* Yorumlar ve Açıklama */
+/* Task Comments */
 .task-comments {
     border-top: 1px solid rgb(185, 185, 185);
-    margin-top: 10px;
-    padding: 5px;
+    padding: 10px;
+    font-size: 14px;
+    color: #666;
 }
 
 .task-description {
-    width: 100%;
+    margin-top: 10px;
     word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 /* Responsive Styles */
 
-/* Tablet ve Mobil Cihazlar */
+/* Tablet Cihazlar */
 @media (max-width: 1024px) {
-    .tasknav {
-        flex-wrap: wrap; /* Tek sütun düzeni için sar */
+    .task-item {
+        width: calc(45% - 40px); /* Daha geniş düzen */
+        margin: 20px 10px;
     }
 
     .task-option {
-        width: calc(50% - 20px); /* Her seçeneğin genişliğini ayarlayın */
-        margin: 10px; /* Dikey boşluk için margin ayarı */
+        font-size: 16px; /* Daha küçük yazı */
+        padding: 8px 15px;
     }
-
-    .task-item {
-        width: calc(100% - 40px); /* Tam genişlikte gösterim */
-        margin-top: 20px;
-    }    
 }
 
 /* Mobil Cihazlar */
 @media (max-width: 768px) {
-    .tasknav {
-        flex-direction: column; /* Navigasyon için dikey hizalama */
-        align-items: center;
-        height: auto; /* Yükseklik otomatik */
+    .task-item {
+        width: calc(100% - 40px); /* Tam genişlik */
+        margin: 10px 0; /* Elemanlar arası boşluk */
     }
 
     .task-option {
-        margin: 5px 0; /* Dikey boşluk */
-        width: calc(90% - 10px); /* Daha geniş tutma */
-    }
-
-    .task-item {
-        width: calc(100% - 40px); /* Tam genişlikte göster */
-        margin: 10px 0; /* Üst-alt boşluk */
-    }
-}
-
-/* Küçük Mobil Cihazlar */
-@media (max-width: 480px) {
-    .task-item {
-        margin: 5px 0; /* Daha az boşluk */
+        width: calc(90% - 20px); /* Genişlik ayarı */
+        margin: 10px auto; /* Ortalanmış elemanlar */
     }
 
     .task-name {
-        font-size: 18px; /* Daha küçük yazı boyutu */
+        font-size: 18px; /* Daha küçük başlık */
     }
 
     .task-status {
-        font-size: 14px; /* Küçük boyut ayarı */
+        font-size: 12px;
+    }
+}
+
+/* Çok Küçük Mobil Cihazlar */
+@media (max-width: 480px) {
+    .task-option {
+        font-size: 14px; /* Yazı boyutunu küçült */
+        padding: 5px 10px; /* Daha küçük alan */
+    }
+
+    .task-item {
+        width: calc(100% - 20px); /* Daha dar genişlik */
+        margin: 10px auto;
+    }
+
+    .task-name {
+        font-size: 16px; /* Küçük başlık */
+    }
+
+    .task-status {
+        font-size: 10px;
+    }
+
+    .task-comments {
+        font-size: 12px;
+    }
+
+    .task-description {
+        font-size: 12px;
     }
 }

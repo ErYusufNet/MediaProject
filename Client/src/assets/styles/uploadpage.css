@@ -1,20 +1,22 @@
+/* Genel Ayarlar */
 .uploadholder {
     width: 100%;
-    height: auto; /* Yüksekliği otomatik ayarlıyoruz */
+    height: auto;
     display: flex;
-    flex-direction: column; /* Flex yönünü dikey yapıyoruz */
+    flex-direction: column;
     align-items: center;
     font-size: 18px;
-    overflow-y: auto; /* Dikey kaydırmayı engellemiyoruz */
+    overflow-y: auto; /* Dikey kaydırma mümkün */
     padding: 20px;
-    box-sizing: border-box; /* Padding'in genişlik hesabına dahil edilmesi sağlanır */
+    box-sizing: border-box;
 }
 
 form {
-    width: 60%;
-    margin-left: 100px;
+    width: 50%; /* Daha uyumlu genişlik */
+    margin: 0 auto; /* Formu merkezleştirir */
     display: flex;
     flex-direction: column;
+    gap: 15px; /* Elemanlar arasında boşluk bırakır */
 }
 
 input, textarea {
@@ -23,16 +25,15 @@ input, textarea {
     width: 100%;
     background-color: #4d4d4d;
     color: white;
-    margin-bottom: 5px;
+    border: none;
     border-radius: 10px;
+    padding: 10px; /* İçerik boşluğu artırılır */
+    box-sizing: border-box;
 }
 
 textarea {
     height: 200px;
-    min-width: 100%;
-    max-width: 100%;
-    min-height: 200px;
-    max-height: 200px;
+    resize: none; /* Kullanıcının boyutlandırmasını engeller */
 }
 
 input[type="file"] {
@@ -40,6 +41,7 @@ input[type="file"] {
     color: black;
     height: auto;
     border-radius: 0;
+    padding: 5px 0; /* Yüksekliği artırır */
 }
 
 .file {
@@ -48,78 +50,96 @@ input[type="file"] {
 }
 
 input[type="submit"] {
-    height: 90px;
-    width: 40%;
-    display: block;
+    height: 60px;
+    width: 50%;
+    align-self: center; /* Butonu formun ortasına hizalar */
     border-radius: 10px;
-    font-size: 25px;
-    font-weight: 200;
+    font-size: 20px;
+    font-weight: 500;
     cursor: pointer;
     margin-top: 20px;
+    background-color: #333;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #555;
 }
 
 /* Responsive Styles */
 
-/* Tablet ve Mobil Cihazlar */
+/* Tablet Cihazlar */
 @media (max-width: 1024px) {
     .uploadholder {
-        padding: 15px; /* Daha küçük ekranlarda padding değeri düşürülür */
+        padding: 15px;
     }
 
     form {
-        width: 80%; /* Form genişliğini artırır */
-        margin-left: 0; /* Soldan boşluk kaldırılır */
+        width: 70%; /* Form genişliği artırılır */
     }
 
     input, textarea {
-        font-size: 16px; /* Küçük ekranlar için font boyutunu küçültür */
+        font-size: 16px;
     }
 
     input[type="submit"] {
-        width: 50%; /* Submit butonunun genişliğini %50 yapar */
+        width: 60%; /* Submit buton genişliği artırılır */
+        height: 50px;
+        font-size: 18px;
     }
 }
 
 /* Mobil Cihazlar */
 @media (max-width: 768px) {
     .uploadholder {
-        padding: 10px; /* Küçük ekranlarda padding değeri daha da küçültülür */
+        padding: 10px;
     }
 
     form {
-        width: 100%; /* Form genişliği %100 yapıldı */
-        margin-left: 0; /* Left margin kaldırıldı */
+        width: 90%; /* Form genişliği mobilde tam ekran yapıldı */
     }
 
     input, textarea {
-        font-size: 16px; /* Daha küçük font boyutu */
+        font-size: 16px;
+        height: 35px;
+        padding: 8px; /* Daha küçük padding */
+    }
+
+    textarea {
+        height: 150px;
     }
 
     input[type="submit"] {
-        width: 60%; /* Submit butonunu genişletir */
+        width: 70%; /* Submit butonu daha geniş */
+        font-size: 16px;
+        height: 45px;
     }
 }
 
 /* Küçük Mobil Cihazlar */
 @media (max-width: 480px) {
     .uploadholder {
-        padding: 5px; /* Küçük ekranlarda padding tamamen kaldırıldı */
+        padding: 5px;
     }
 
     form {
-        width: 100%; /* Formu tam genişlikte yapar */
+        width: 100%; /* Form tamamen genişliğe yayılır */
     }
 
     input, textarea {
-        font-size: 14px; /* Daha küçük font boyutu */
-        height: 35px; /* Daha küçük input alanı */
+        font-size: 14px;
+        height: 30px; /* Daha küçük giriş alanı */
+        padding: 5px;
     }
 
     textarea {
-        height: 150px; /* Küçük ekranlarda textarea boyutunu küçültür */
+        height: 120px; /* Textarea yüksekliği küçültülür */
     }
 
     input[type="submit"] {
-        width: 70%; /* Submit butonunu daha geniş yapar */
+        width: 80%; /* Buton genişliği artırılır */
+        font-size: 14px;
+        height: 40px;
     }
 }

@@ -66,6 +66,9 @@ switch ($request[0]) {
             case 'assign-to':
                 echo assignToTask($_POST['id'], $_POST['reviewer'], $sbservice);
                 break;
+            case 'save-img-coords':
+                echo saveImgCoords($_POST['task_id'], $_POST['img_coords'], $mdb);
+                break;
         }
         break;
 

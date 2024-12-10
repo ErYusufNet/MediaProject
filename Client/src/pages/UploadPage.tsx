@@ -17,6 +17,7 @@ function UploadPage() {
     }
 
     const body = new FormData();
+
     body.append('name', name);
     body.append('desc', desc);
     body.append('file', file);

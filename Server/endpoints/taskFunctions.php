@@ -23,18 +23,13 @@ function getTasks($view, $user, $service, $mdb)
 
             if ($image) {
                 $task->img = 'data:image/png;base64,' . base64_encode($image->img->getData());
+                $task->coords = isset($image['drawingCoords']) ? $image['drawingCoords'] : null;
             } else {
                 $video = $mdb->videos->findOne(['task_id' => $task->id]);
                 if ($video) {
                     $fileId = $video->video_id;
                     $video_file = $mdb->selectGridFSBucket()->openDownloadStream($fileId);
                     $contents = stream_get_contents($video_file);
-                    // $file = $mdb->selectGridFSBucket()->findOne(['_id' => $fileId]);
-                    // if ($video_file) {
-                    //     header('Content-Type: application/octet-stream');
-                    // }
-                    // fpassthru($stream); // 将图片内容直接输出到浏览器
-                    // fclose($stream); // 关闭流
                     $task->video = 'data:video/mp4;base64,' . base64_encode($contents);
                 } else {
                     $task->video = null;
@@ -93,7 +88,41 @@ function createTask($name, $desc, $file, $installer, $service, $mdb)
         return $e->getMessage();
     }
 }
+function saveImgCoords($taskId, $imgCoords, $mdb)
+{
 
+
+    try {
+
+
+
+        $filter = ['task_id' => (int) $taskId];
+
+
+        $update = [
+            '$set' => ['drawingCoords' => $imgCoords]
+        ];
+
+
+        $options = [
+            'returnDocument' => MongoDB\Operation\FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
+            'upsert' => false,
+        ];
+        $result = $mdb->images->findOneAndUpdate($filter, $update, $options);
+        if ($result) {
+            http_response_code(201);
+            echo json_encode(["message" => "Coords saved successfully"]);
+        } else {
+            http_response_code(500);
+            echo json_encode(["message" => "An error occured"]);
+        }
+
+
+    } catch (Error $e) {
+        http_response_code(500);
+        return $e->getMessage();
+    }
+}
 function updateStatus($id, $status, $service)
 {
     $db = $service->initializeDatabase('tasks', 'id');

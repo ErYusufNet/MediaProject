@@ -17,7 +17,8 @@ import {
 } from "@fluentui/react-components";
 import { makeStyles } from '@griffel/react';
 import axios from 'axios';
-
+import { Canvas } from "../components/Canvas";
+import type { CanvasData, DrawingPath } from '../types/annotation';
 const useStyles = makeStyles({
   title: {
     textAlign: 'left',
@@ -107,13 +108,14 @@ interface Task {
   id: string;
   name: string;
   desc: string;
-  img: string | null;
+  img: string;
   video: string | null;
   status: string;
   assigned_to: Array<String>;
   created_at: Date;
   comments: Comment[];
   installer: String;
+  coords?: string;
 }
 
 function TasksPage() {
@@ -125,10 +127,25 @@ function TasksPage() {
   const [reviewers, setReviewers] = useState([]);
   const [assignTo, setAssignTo] = useState("");
 
+
+  const updatePaths = (key: string, data: CanvasData) => {
+    setCanvasData((prevState) => ({
+      ...prevState,
+      [key]: data,
+    }));
+  };
+
   async function displayTasks(view: string) {
     setCurrentView(view);
     const response = await axios.get(`http://localhost:8000/tasks/get-tasks?view=${view}&user=${localStorage.getItem('user')}`)
     setTasks(response.data.message);
+    response.data.message.forEach(({ img, coords }: { img: string, coords: string }) => {
+      if (coords) {
+        let img_coords: DrawingPath[] = JSON.parse(coords)
+        updatePaths(img, { imageUrl: img, paths: img_coords });
+      }
+
+    })
   }
 
   async function changeStatus(value: string, id: string) {
@@ -256,7 +273,35 @@ function TasksPage() {
     }
 
   }, []);
+  ////// IMPORTED ANNOTATIONS GO HERE
+  const handleAnnotationsImport = (importedData: CanvasData) => {
+    setCanvasData(prev => ({
+      ...prev,
+      [importedData.imageUrl]: importedData
+    }));
+  };
+  const handleCanvasChange = (imageUrl: string, data: CanvasData) => {
+    setCanvasData(prev => ({
+      ...prev,
+      [imageUrl]: data
+    }));
+  };
 
+  const sendCoordinates = async (imgUrl: any, taskId: any) => {
+    const body = new URLSearchParams();
+    body.append('task_id', taskId);
+    body.append('img_coords', JSON.stringify(canvasData[imgUrl].paths));
+
+    try {
+      const response = await axios.post('http://localhost:8000/tasks/save-img-coords', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+      alert(response.data.message);
+
+    } catch (error) {
+      console.error(error);
+      alert("An unexpected error has occurred.");
+    }
+  };
+  const [canvasData, setCanvasData] = useState<Record<string, CanvasData>>({});
   return (
     <div className='tasksholder'>
       <nav className='tasknav'>
@@ -283,9 +328,19 @@ function TasksPage() {
         ? <div className='task-content'>
           {
             tasks.map((task) => {
-              let img_or_vid = task.img ? <img className='task-img' src={task.img} alt={task.name} /> : task.video ? <video loop autoPlay={true} muted playsInline src={task.video} id="video" width="300" height="200" ></video> : ""
+
+              let img_or_vid = task.img ? <div>
+                <Canvas
+                  imageUrl={task.img}
+                  data={canvasData[task.img]}
+                  onChange={(data) => handleCanvasChange(task.img, data)}
+                /><div className={styles.button}>
+                  <Button onClick={() => sendCoordinates(task.img, task.id)}>Save Annotation</Button>
+                </div></div> : task.video ? <video loop autoPlay={true} muted playsInline src={task.video} id="video" width="300" height="200" ></video> : ""
               return (
                 <div className='task-item'>
+
+
                   {img_or_vid}
 
                   <div className='task-info'>

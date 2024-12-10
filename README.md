@@ -25,9 +25,9 @@
     - Run server with 'php -S localhost:8000'
  
   ## To connect to SupaBase DB
-        - Create supabase instance
-        - Get supabase connection string from the supabase dashboard
-        - install psql
-        - run
-            `psql -d "$NEW_DB_URL" --disable-triggers -f schema.sql`
+    - Create supabase instance
+    - Get supabase connection string from the supabase dashboard
+    - install psql
+    - run
+      `psql -d "$NEW_DB_URL" --disable-triggers -f schema.sql`
             `psql -d "$NEW_DB_URL" -f data.sql`
